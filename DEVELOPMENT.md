@@ -26,7 +26,7 @@
 
 ### 提 PR 时触发
 
-- [validations.yaml](.github/workflows/validations.yaml): 官方的测试流水线，包含单元测试、集成测试等
+- [tests.yaml](.github/workflows/tests.yaml): 官方的测试流水线，包含单元测试、集成测试等
 
 ### 合并到 alauda-vx.xx.xx 分支时触发
 
