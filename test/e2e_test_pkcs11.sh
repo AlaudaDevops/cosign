@@ -24,16 +24,22 @@ CONTAINER_ID=$(docker run -dit --name softhsm -v $(pwd):/root/cosign -p 2345:234
 
 docker exec -i $CONTAINER_ID /bin/bash << 'EOF'
 
-# to install the latest go that is not available in the alpine repository
-echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+# add make pcsc-lite-libs command
 apk update
-
-# add make pcsc-lite-libs go command
-apk add make build-base
-
-apk add go@edge
+apk add make build-base wget tar
 
 cd /root/cosign
+
+# Read Go version from go.mod
+GO_VERSION=$(grep "^go " go.mod | awk '{print $2}')
+echo "Installing Go version ${GO_VERSION} from go.mod"
+
+# Install Go manually
+wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
+rm -rf /usr/local/go
+tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+rm go${GO_VERSION}.linux-amd64.tar.gz
+export PATH=/usr/local/go/bin:$PATH
 
 softhsm2-util --init-token --free --label "My Token" --pin 1234 --so-pin 1234
 go test -v -cover -coverprofile=./cover.out -tags=softhsm,pkcs11key -coverpkg github.com/sigstore/cosign/v2/pkg/cosign/pkcs11key test/pkcs11_test.go
