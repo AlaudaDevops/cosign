@@ -78,6 +78,11 @@ linters:
         path: pkg/cosign/verify.go
         # NewEntry used for Rekor v1, will update to NewTlogEntry for Rekor v2 support
         text: SA1019
+      - linters:
+          - staticcheck
+        path: _test\.go
+        # swag.Int64/String deprecated, will migrate to conv.Pointer later
+        text: "SA1019.*swag\\.(Int64|String)"
     paths:
       - third_party$
       - builtin$
