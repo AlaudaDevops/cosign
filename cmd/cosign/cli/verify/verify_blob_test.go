@@ -1454,7 +1454,7 @@ func (s *keylessStack) genLeafCert(t *testing.T, subject string, issuer string) 
 }
 
 func (s *keylessStack) genChainFile(t *testing.T) {
-	var chain []byte
+	chain := make([]byte, 0, len(s.subPemCert)+len(s.rootPemCert))
 	chain = append(chain, s.subPemCert...)
 	chain = append(chain, s.rootPemCert...)
 	tmpChainFile, err := os.CreateTemp(s.td, "cosign_fulcio_chain_*.cert")

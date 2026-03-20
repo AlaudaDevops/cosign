@@ -43,7 +43,7 @@ jobs:
       - check-signature
 
     container:
-      image: ghcr.io/gythialy/golang-cross:1.25.7-0@sha256:a34c5a06e72a0c124a7c0e0da3aa0a70b14309918727148c08d1cc8bca908c9e
+      image: tykio/golang-cross:1.26-bullseye-pgo@sha256:dc3e9729361913e091e6e0269686a04e4df6aa70ab512ed015d07f2900db171d
       volumes:
         - /usr:/host_usr
         - /opt:/host_opt
@@ -85,6 +85,30 @@ jobs:
           rm -rf /host_opt/ghc || true
       - name: check disk space
         run: df -h
+
+      - name: install build dependencies
+        run: |
+          SYFT_VERSION=v1.41.2
+          SYFT_TARBALL="syft_${SYFT_VERSION#v}_linux_amd64.tar.gz"
+          SYFT_CHECKSUMS="syft_${SYFT_VERSION#v}_checksums.txt"
+
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential \
+            pkg-config \
+            clang \
+            llvm \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            gcc-mingw-w64-x86-64 \
+            g++-mingw-w64-x86-64 \
+            libpcsclite-dev \
+            curl
+          curl -sSfLo "/tmp/${SYFT_TARBALL}" "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/${SYFT_TARBALL}"
+          curl -sSfLo "/tmp/${SYFT_CHECKSUMS}" "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/${SYFT_CHECKSUMS}"
+          grep " ${SYFT_TARBALL}\$" "/tmp/${SYFT_CHECKSUMS}" | (cd /tmp && sha256sum -c)
+          tar -C /tmp -xzf "/tmp/${SYFT_TARBALL}" syft
+          install -m 0755 /tmp/syft /usr/local/bin/syft
 
       - name: goreleaser snapshot
         run: make snapshot

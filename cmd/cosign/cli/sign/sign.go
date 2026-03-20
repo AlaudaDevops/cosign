@@ -463,7 +463,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
 		if signOpts.Recursive {
 			outputSignature = fmt.Sprintf("%s-%s", outputSignature, strings.Replace(digest.DigestStr(), ":", "-", 1))
 		}
-		if err := os.WriteFile(outputSignature, []byte(b64sig), 0600); err != nil {
+		if err := os.WriteFile(filepath.Clean(outputSignature), []byte(b64sig), 0600); err != nil { //nolint:gosec // output path is an intentional user-specified CLI destination
 			return fmt.Errorf("create signature file: %w", err)
 		}
 	}
@@ -473,7 +473,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
 		if signOpts.Recursive {
 			outputPayload = fmt.Sprintf("%s-%s", outputPayload, strings.Replace(digest.DigestStr(), ":", "-", 1))
 		}
-		if err := os.WriteFile(outputPayload, payload, 0600); err != nil {
+		if err := os.WriteFile(filepath.Clean(outputPayload), payload, 0600); err != nil { //nolint:gosec // output path is an intentional user-specified CLI destination
 			return fmt.Errorf("create payload file: %w", err)
 		}
 	}
@@ -484,7 +484,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
 			return fmt.Errorf("create certificate file: %w", err)
 		}
 
-		if err := os.WriteFile(signOpts.OutputCertificate, rekorBytes, 0600); err != nil {
+		if err := os.WriteFile(filepath.Clean(signOpts.OutputCertificate), rekorBytes, 0600); err != nil { //nolint:gosec // output path is an intentional user-specified CLI destination
 			return fmt.Errorf("create certificate file: %w", err)
 		}
 		// TODO: maybe accept a --b64 flag as well?
@@ -501,7 +501,7 @@ func signDigest(ctx context.Context, digest name.Digest, payload []byte, ko opti
 		if err != nil {
 			return fmt.Errorf("failed to marshal signed payload: %w", err)
 		}
-		if err := os.WriteFile(ko.BundlePath, contents, 0600); err != nil {
+		if err := os.WriteFile(filepath.Clean(ko.BundlePath), contents, 0600); err != nil { //nolint:gosec // output path is an intentional user-specified CLI destination
 			return fmt.Errorf("create bundle file: %w", err)
 		}
 		ui.Infof(ctx, "Wrote bundle to file %s", ko.BundlePath)
