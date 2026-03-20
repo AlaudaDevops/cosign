@@ -20,6 +20,19 @@ sboms:
   - artifacts: binary
 
 builds:
+  # This release config is intentionally scoped to the only artifacts we need
+  # to publish: standard Linux binaries for amd64 and arm64.
+  #
+  # The previous non-Linux targets and extra Linux architectures
+  # (arm, s390x, ppc64le, riscv64) were intentionally removed because they are
+  # not needed for this distribution.
+  #
+  # This also means this distribution intentionally no longer publishes
+  # official macOS or Windows binaries.
+  #
+  # The previous pivkey/pkcs11key-specific builds were also intentionally
+  # removed for all platforms because this release no longer needs to ship
+  # those specialized variants.
   - id: linux
     binary: cosign-linux-{{ .Arch }}
     no_unique_dist_dir: true
@@ -32,124 +45,10 @@ builds:
     goarch:
       - amd64
       - arm64
-      - arm
-      - s390x
-      - ppc64le
-      - riscv64
-    goarm:
-      - '7'
     ldflags:
       - "{{ .Env.LDFLAGS }}"
     env:
       - CGO_ENABLED=0
-
-  - id: linux-pivkey-pkcs11key-amd64
-    binary: cosign-linux-pivkey-pkcs11key-amd64
-    no_unique_dist_dir: true
-    main: ./cmd/cosign
-    flags:
-      - -trimpath
-    mod_timestamp: '{{ .CommitTimestamp }}'
-    goos:
-      - linux
-    goarch:
-      - amd64
-    ldflags:
-      - "{{ .Env.LDFLAGS }}"
-    tags:
-      - pivkey
-      - pkcs11key
-    hooks:
-      pre:
-        - apt-get update
-        - apt-get -y install --no-install-recommends libpcsclite-dev
-    env:
-      - PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
-
-  - id: linux-pivkey-pkcs11key-arm64
-    binary: cosign-linux-pivkey-pkcs11key-arm64
-    no_unique_dist_dir: true
-    main: ./cmd/cosign
-    flags:
-      - -trimpath
-    mod_timestamp: '{{ .CommitTimestamp }}'
-    goos:
-      - linux
-    goarch:
-      - arm64
-    ldflags:
-      - "{{ .Env.LDFLAGS }}"
-    tags:
-      - pivkey
-      - pkcs11key
-    hooks:
-      pre:
-        - dpkg --add-architecture arm64
-        - apt-get update
-        - apt-get install -y --no-install-recommends libpcsclite-dev:arm64
-    env:
-      - CC=aarch64-linux-gnu-gcc
-      - PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/
-
-  - id: darwin-amd64
-    binary: cosign-darwin-amd64
-    no_unique_dist_dir: true
-    env:
-      - CC=o64-clang
-      - CXX=o64-clang++
-    main: ./cmd/cosign
-    flags:
-      - -trimpath
-    mod_timestamp: '{{ .CommitTimestamp }}'
-    goos:
-      - darwin
-    goarch:
-      - amd64
-    ldflags:
-      - "{{ .Env.LDFLAGS }}"
-    tags:
-      - pivkey
-      - pkcs11key
-
-  - id: darwin-arm64
-    binary: cosign-darwin-arm64
-    no_unique_dist_dir: true
-    env:
-      - CC=aarch64-apple-darwin23-clang
-      - CXX=aarch64-apple-darwin23-clang++
-    main: ./cmd/cosign
-    flags:
-      - -trimpath
-    goos:
-      - darwin
-    goarch:
-      - arm64
-    tags:
-      - pivkey
-      - pkcs11key
-    ldflags:
-      - "{{.Env.LDFLAGS}}"
-
-  - id: windows-amd64
-    binary: cosign-windows-amd64
-    no_unique_dist_dir: true
-    env:
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
-    main: ./cmd/cosign
-    mod_timestamp: '{{ .CommitTimestamp }}'
-    flags:
-      - -trimpath
-    goos:
-      - windows
-    goarch:
-      - amd64
-    ldflags:
-      - -buildmode=exe
-      - "{{ .Env.LDFLAGS }}"
-    tags:
-      - pivkey
-      - pkcs11key
 
 signs:
   - id: cosign

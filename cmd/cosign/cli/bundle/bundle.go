@@ -23,6 +23,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/secure-systems-lab/go-securesystemslib/dsse"
 	"github.com/sigstore/rekor/pkg/generated/client"
@@ -207,7 +208,7 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 	}
 
 	if c.Out != "" {
-		err = os.WriteFile(c.Out, bundleBytes, 0600)
+		err = os.WriteFile(filepath.Clean(c.Out), bundleBytes, 0600) //nolint:gosec // output path is an intentional user-specified CLI destination
 		if err != nil {
 			return err
 		}

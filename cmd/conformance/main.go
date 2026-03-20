@@ -81,7 +81,9 @@ func main() {
 
 	args := []string{}
 
-	switch os.Args[1] {
+	command := os.Args[1]
+
+	switch command {
 	case "sign-bundle":
 		args = append(args, "sign-blob")
 		args = append(args, "-y")
@@ -106,7 +108,7 @@ func main() {
 		}
 
 	default:
-		log.Fatalf("Unsupported command %s", os.Args[1])
+		log.Fatal("unsupported command") //nolint:gosec // command comes from argv; avoid echoing tainted input in logs
 	}
 
 	if bundlePath != nil {
@@ -130,13 +132,18 @@ func main() {
 	}
 	args = append(args, os.Args[len(os.Args)-1])
 
-	dir := filepath.Dir(os.Args[0])
-	initCmd := exec.Command(filepath.Join(dir, "cosign"), "initialize") // #nosec G204
-	err := initCmd.Run()
+	self, err := os.Executable()
 	if err != nil {
 		log.Fatal(err)
 	}
-	cmd := exec.Command(filepath.Join(dir, "cosign"), args...) // #nosec G204
+	cosignPath := filepath.Clean(filepath.Join(filepath.Dir(self), "cosign"))
+
+	initCmd := exec.Command(cosignPath, "initialize") // #nosec G204
+	err = initCmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	cmd := exec.Command(cosignPath, args...) //nolint:gosec // args are passed directly as argv to a sibling binary, not to a shell
 	var out strings.Builder
 	cmd.Stdout = &out
 	cmd.Stderr = &out
