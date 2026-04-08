@@ -43,7 +43,7 @@ jobs:
       - check-signature
 
     container:
-      image: tykio/golang-cross:1.26-bullseye-pgo@sha256:dc3e9729361913e091e6e0269686a04e4df6aa70ab512ed015d07f2900db171d
+      image: tykio/golang-cross:1.26-bullseye-pgo@sha256:4675026d8d88dd88b736d607fb3dfa210f0d962d5a7d77c88343e7520e79b962
       volumes:
         - /usr:/host_usr
         - /opt:/host_opt
