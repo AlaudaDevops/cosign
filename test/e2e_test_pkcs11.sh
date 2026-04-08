@@ -36,6 +36,9 @@ apk add go@edge
 cd /root/cosign
 
 softhsm2-util --init-token --free --label "My Token" --pin 1234 --so-pin 1234
+# Allow Go to auto-download the toolchain version required by go.mod when the
+# Alpine-installed Go is older than the minimum version specified in go.mod.
+export GOTOOLCHAIN=auto
 go test -v -cover -coverprofile=./cover.out -tags=softhsm,pkcs11key -coverpkg github.com/sigstore/cosign/v2/pkg/cosign/pkcs11key test/pkcs11_test.go
 
 EOF
