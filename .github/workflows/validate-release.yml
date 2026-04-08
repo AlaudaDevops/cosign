@@ -115,6 +115,9 @@ jobs:
         env:
           PROJECT_ID: honk-fake-project
           RUNTIME_IMAGE: gcr.io/distroless/static-debian12:nonroot
+          # Override GOTOOLCHAIN=local set in the container image so that Go can
+          # auto-download the required toolchain version specified in go.mod.
+          GOTOOLCHAIN: auto
 
       - name: check binaries
         run: |
