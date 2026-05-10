@@ -73,6 +73,10 @@ jobs:
         image: hashicorp/vault:latest
         env:
           VAULT_DEV_ROOT_TOKEN_ID: root
+          # GitHub Actions service containers do not grant CAP_SETFCAP, so
+          # the Vault entrypoint's setcap call fails with "Operation not
+          # permitted". SKIP_SETCAP makes the entrypoint skip that step.
+          SKIP_SETCAP: "true"
         options: >-
           --health-cmd "VAULT_ADDR=http://127.0.0.1:8200 vault status"
           --health-interval 1s
