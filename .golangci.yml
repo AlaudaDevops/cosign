@@ -83,6 +83,26 @@ linters:
         path: pkg/cosign/verify_bundle_test.go
         # NewEntry used for Rekor v1, will update to NewTlogEntry for Rekor v2 support
         text: SA1019
+      # in-toto-golang v0.11.0 deprecated the legacy Statement/StatementHeader/
+      # Subject/ProvenancePredicate types in favor of the protobuf-generated
+      # in_toto Attestation Framework v1 API. Migrating the attestation code is a
+      # separate effort; suppress the deprecation lint until then.
+      - linters:
+          - staticcheck
+        path: pkg/cosign/attestation/attestation.go
+        text: SA1019
+      - linters:
+          - staticcheck
+        path: pkg/cosign/fetch.go
+        text: SA1019
+      - linters:
+          - staticcheck
+        path: pkg/cosign/verifiers.go
+        text: SA1019
+      - linters:
+          - staticcheck
+        path: pkg/policy/attestation
+        text: SA1019
     paths:
       - third_party$
       - builtin$
