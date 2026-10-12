@@ -172,6 +172,8 @@ func TestAttachWithRFC3161Timestamp(t *testing.T) {
 	// TSA server needed to create timestamp
 	viper.Set("timestamp-signer", "memory")
 	viper.Set("timestamp-signer-hash", "sha256")
+	viper.Set("default-policy-oid", "1.3.6.1.4.1.57264.2")
+	viper.Set("accepted-policy-oids", []string{"1.3.6.1.4.1.57264.2"})
 	apiServer := server.NewRestAPIServer("localhost", 0, []string{"http"}, false, 10*time.Second, 10*time.Second)
 	server := httptest.NewServer(apiServer.GetHandler())
 	t.Cleanup(server.Close)
