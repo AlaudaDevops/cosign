@@ -179,6 +179,8 @@ func generateMTLSKeys(t *testing.T, td string) (string, string, string, string, 
 func setUpTSAServerWithTLS(t *testing.T, td, timestampCACert, timestampServerKey, timestampServerCert string) (string, string, func()) {
 	viper.Set("timestamp-signer", "memory")
 	viper.Set("timestamp-signer-hash", "sha256")
+	viper.Set("default-policy-oid", "1.3.6.1.4.1.57264.2")
+	viper.Set("accepted-policy-oids", []string{"1.3.6.1.4.1.57264.2"})
 	viper.Set("disable-ntp-monitoring", true)
 	viper.Set("tls-host", "0.0.0.0")
 	viper.Set("tls-port", 3000)
