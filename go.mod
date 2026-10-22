@@ -1,6 +1,7 @@
 module github.com/sigstore/cosign/v2
 
 go 1.24.3
+toolchain go1.27.3
 
 require (
 	cuelang.org/go v0.12.1
