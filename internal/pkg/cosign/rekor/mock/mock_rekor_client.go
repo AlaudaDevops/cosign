@@ -15,6 +15,7 @@
 package mock
 
 import (
+	"context"
 	"errors"
 
 	"github.com/go-openapi/runtime"
@@ -29,6 +30,10 @@ import (
 // mClient.Entries = &logEntry
 type EntriesClient struct {
 	Entries []*models.LogEntry
+}
+
+func (m *EntriesClient) CreateLogEntryContext(_ context.Context, params *entries.CreateLogEntryParams, opts ...entries.ClientOption) (*entries.CreateLogEntryCreated, error) {
+	return m.CreateLogEntry(params, opts...)
 }
 
 func (m *EntriesClient) CreateLogEntry(_ *entries.CreateLogEntryParams, _ ...entries.ClientOption) (*entries.CreateLogEntryCreated, error) {
@@ -73,6 +78,18 @@ func (m *EntriesClient) SearchLogQuery(params *entries.SearchLogQueryParams, opt
 }
 
 // TODO: Implement mock
+func (m *EntriesClient) GetLogEntryByIndexContext(_ context.Context, params *entries.GetLogEntryByIndexParams, opts ...entries.ClientOption) (*entries.GetLogEntryByIndexOK, error) {
+	return m.GetLogEntryByIndex(params, opts...)
+}
+
+func (m *EntriesClient) GetLogEntryByUUIDContext(_ context.Context, params *entries.GetLogEntryByUUIDParams, opts ...entries.ClientOption) (*entries.GetLogEntryByUUIDOK, error) {
+	return m.GetLogEntryByUUID(params, opts...)
+}
+
+func (m *EntriesClient) SearchLogQueryContext(_ context.Context, params *entries.SearchLogQueryParams, opts ...entries.ClientOption) (*entries.SearchLogQueryOK, error) {
+	return m.SearchLogQuery(params, opts...)
+}
+
 func (m *EntriesClient) SetTransport(transport runtime.ClientTransport) { //nolint: revive
 	// noop
 }
