@@ -159,7 +159,7 @@ func TestVerifyBlob(t *testing.T) {
 	unexpiredCertPem, _ := cryptoutils.MarshalCertificateToPEM(unexpiredLeafCert)
 
 	expiredLeafCert, _ := test.GenerateLeafCertWithExpiration(identity, issuer,
-		time.Now().Add(-time.Hour), leafPriv, rootCert, rootPriv)
+		time.Now().Add(-10*time.Minute), leafPriv, rootCert, rootPriv)
 	expiredLeafPem, _ := cryptoutils.MarshalCertificateToPEM(expiredLeafCert)
 
 	unrelatedPriv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -206,7 +206,7 @@ func TestVerifyBlob(t *testing.T) {
 	unrelatedSignature := makeSignature(blobBytes, unrelatedSigner)
 
 	// initialize timestamp for expired and unexpired certificates
-	expiredTSAOpts := mock.TSAClientOptions{Time: time.Now().Add(-time.Hour), Message: []byte(blobSignature)}
+	expiredTSAOpts := mock.TSAClientOptions{Time: time.Now().Add(-1 * time.Minute), Message: []byte(blobSignature)}
 	unexpiredTSAOpts := mock.TSAClientOptions{Time: time.Now(), Message: []byte(blobSignature)}
 	tsaClient, err := mock.NewTSAClient(expiredTSAOpts)
 	if err != nil {

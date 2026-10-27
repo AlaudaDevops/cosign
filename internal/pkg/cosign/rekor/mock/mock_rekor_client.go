@@ -90,6 +90,6 @@ func (m *EntriesClient) SearchLogQueryContext(_ context.Context, params *entries
 	return m.SearchLogQuery(params, opts...)
 }
 
-func (m *EntriesClient) SetTransport(transport runtime.ClientTransport) { //nolint: revive
+func (m *EntriesClient) SetTransport(transport runtime.ContextualTransport) { //nolint: revive
 	// noop
 }
